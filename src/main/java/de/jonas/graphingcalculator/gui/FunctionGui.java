@@ -237,7 +237,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
      *
      * @return Die Skalierung der x-Achse unter Berücksichtigung einer falschen Eingebe des Nutzers.
      */
-    public int getXScaling() {
+    private int getXScaling() {
         try {
             return Integer.parseInt(this.xScalingField.getText());
         } catch (@NotNull final NumberFormatException ignored) {
@@ -250,7 +250,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
      *
      * @return Die Skalierung der y-Achse unter Berücksichtigung einer falschen Eingebe des Nutzers.
      */
-    public int getYScaling() {
+    private int getYScaling() {
         try {
             return Integer.parseInt(this.yScalingField.getText());
         } catch (@NotNull final NumberFormatException ignored) {

@@ -2,6 +2,7 @@ package de.jonas.graphingcalculator.constant;
 
 import de.jonas.graphingcalculator.gui.CalculatorGui;
 import de.jonas.graphingcalculator.gui.FunctionGui;
+import de.jonas.graphingcalculator.gui.ValueTableGui;
 import de.jonas.graphingcalculator.object.CalculatorField;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +68,13 @@ public enum CalculatorActionType {
         "Zeichnen",
         e -> new FunctionGui(),
         1
+    ),
+    /** Der {@link CalculatorActionType Typ} für das Erstellen einer Wertetabelle. */
+    VALUE_TABLE_FUNCTION(
+        "valueTableFunction.png",
+        "Wertetabelle",
+        e -> new ValueTableGui(),
+        2
     );
     //</editor-fold>
 
