@@ -1,5 +1,6 @@
 package de.jonas.graphingcalculator.gui;
 
+import de.jonas.graphingcalculator.handler.FileHandler;
 import de.jonas.graphingcalculator.handler.FunctionHandler;
 import de.jonas.graphingcalculator.object.DrawFunction;
 import de.jonas.graphingcalculator.object.Gui;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,6 +19,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Ein {@link FunctionGui} stellt eine Instanz eines {@link Gui} dar, welches eine grafische Oberfläche darstellt, auf
@@ -196,6 +200,18 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             this.drawFunction.repaint();
         });
 
+        final JButton saveToImageButton = getOptionButton("Als Bild speichern", 18, e -> {
+            final File file = FileHandler.getSelectedSaveDir();
+
+            if (file == null) return;
+
+            try {
+                ImageIO.write(this.drawFunction.getGraphicsAsImage(), "PNG", file);
+            } catch (@NotNull final  IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         // add components
         super.add(rootsButton);
         super.add(extremesButton);
@@ -203,6 +219,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         super.add(removeLastMarkedPointButton);
         super.add(tangentButton);
         super.add(derivationButton);
+        super.add(saveToImageButton);
         super.add(this.drawFunction);
 
         super.addMouseListener(this);

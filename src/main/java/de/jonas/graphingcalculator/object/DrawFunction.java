@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -144,6 +145,19 @@ public final class DrawFunction extends JLabel {
     }
     //</editor-fold>
 
+    /**
+     * Gibt die aktuellen Zeichnungen dieses {@link DrawFunction} in Form eines Bildes zurück.
+     *
+     * @return Die aktuellen zeichnungen dieses {@link DrawFunction} in Form eines Bildes.
+     */
+    public BufferedImage getGraphicsAsImage() {
+        final BufferedImage image = new BufferedImage(super.getWidth(), super.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        final Graphics imageGraphics = image.createGraphics();
+
+        drawGraphics(imageGraphics);
+
+        return image;
+    }
 
     /**
      * Fügt einen bestimmten Punkt zu den Punkten hinzu, die besonders markiert werden sollen in der Funktion.
@@ -182,6 +196,124 @@ public final class DrawFunction extends JLabel {
      */
     public void handleMouseReleased() {
         this.mouse = null;
+    }
+
+    /**
+     * Zeichnet alle Grafiken.
+     *
+     * @param g Das {@link Graphics Graphics-Objekt}, mit dem alle Grafiken gezeichnet werden sollen.
+     */
+    private void drawGraphics(@NotNull final Graphics g) {
+        // draw background
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, 0, super.getWidth(), super.getHeight());
+
+        // draw function
+        g.setColor(Color.WHITE);
+        g.setFont(DEFAULT_FONT.deriveFont(17F));
+        g.drawString("f(x) = " + this.functionHandler.getFunction(), 20, 30);
+
+        final int yAxisX = super.getWidth() / 2;
+        final int xAxisY = super.getHeight() / 2;
+
+        // draw coordinate system
+        g.setFont(DEFAULT_FONT);
+        g.drawLine(
+            X_MARGIN - 20,
+            xAxisY,
+            super.getWidth() - X_MARGIN + 20,
+            xAxisY
+        );
+        g.drawLine(
+            yAxisX,
+            super.getHeight() - Y_MARGIN - 5,
+            yAxisX,
+            Y_MARGIN
+        );
+
+        // draw arrows
+        g.drawLine(super.getWidth() - X_MARGIN + 20, xAxisY, super.getWidth() - X_MARGIN + 10, xAxisY - 5);
+        g.drawLine(super.getWidth() - X_MARGIN + 20, xAxisY, super.getWidth() - X_MARGIN + 10, xAxisY + 5);
+        g.drawLine(yAxisX, Y_MARGIN, yAxisX - 5, Y_MARGIN + 10);
+        g.drawLine(yAxisX, Y_MARGIN, yAxisX + 5, Y_MARGIN + 10);
+
+        // draw x labels
+        for (int i = -LABEL_AMOUNT_X; i <= LABEL_AMOUNT_X; i++) {
+            g.drawLine(
+                yAxisX + i * LABEL_MARGIN,
+                xAxisY - 5,
+                yAxisX + i * LABEL_MARGIN,
+                xAxisY + 5
+            );
+
+            if (i == 0) continue;
+
+            g.drawString(
+                String.valueOf(Math.round((((double) this.scaleX / LABEL_AMOUNT_X) * i) * 10D) / 10D),
+                yAxisX + i * LABEL_MARGIN - 5,
+                xAxisY + 20
+            );
+        }
+
+        // draw y labels
+        for (int i = -LABEL_AMOUNT_Y; i <= LABEL_AMOUNT_Y; i++) {
+            g.drawLine(
+                yAxisX - 5,
+                xAxisY - i * LABEL_MARGIN,
+                yAxisX + 5,
+                xAxisY - i * LABEL_MARGIN
+            );
+
+            if (i == 0) continue;
+
+            g.drawString(
+                String.valueOf(Math.round((((double) this.scaleY / LABEL_AMOUNT_Y) * i) * 10D) / 10D),
+                yAxisX - 40,
+                (xAxisY - i * LABEL_MARGIN) + 5
+            );
+        }
+
+        // draw function
+        g.setColor(Color.RED);
+        drawFunction(g, this.function, yAxisX, xAxisY);
+
+        // check if roots or extremes are enabled
+        g.setColor(Color.BLUE);
+        if (this.enableRoots) drawRoots(g, yAxisX, xAxisY);
+        if (this.enableExtremes) drawExtremes(g, yAxisX, xAxisY);
+
+        // draw marked points
+        for (@NotNull final Point point : this.markedPoints) {
+            final int x = getValueX(point.getX());
+            final int y = getValueY(point.getY());
+
+            g.fillOval(
+                x + (yAxisX - X_MARGIN) - (MARK_SIZE / 2),
+                y - (xAxisY - Y_MARGIN) - (MARK_SIZE / 2),
+                MARK_SIZE,
+                MARK_SIZE
+            );
+
+            final double xCoordinate = Math.round(point.getX() * 100D) / 100D;
+            final double yCoordinate = Math.round(point.getY() * 100D) / 100D;
+
+            g.setFont(DEFAULT_FONT.deriveFont(12F));
+            g.drawString(
+                "(" + xCoordinate + " | " + yCoordinate + ")",
+                x + (yAxisX - X_MARGIN) - 10,
+                y - (xAxisY - Y_MARGIN) - 15
+            );
+        }
+
+        // draw mouse
+        if (this.mouse != null) drawMouse(g, yAxisX, xAxisY);
+
+        // draw tangent
+        if (this.tangentFunction != null) drawTangent(g, yAxisX, xAxisY);
+
+        // check if derivation is enabled
+        g.setColor(Color.GREEN);
+        if (this.enableDerivation) drawFunction(g, this.derivation, yAxisX, xAxisY);
     }
 
     /**
@@ -411,116 +543,7 @@ public final class DrawFunction extends JLabel {
     protected void paintComponent(@NotNull final Graphics g) {
         super.paintComponent(g);
 
-        // draw background
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 0, super.getWidth(), super.getHeight());
-
-        // draw function
-        g.setColor(Color.WHITE);
-        g.setFont(DEFAULT_FONT.deriveFont(17F));
-        g.drawString("f(x) = " + this.functionHandler.getFunction(), 20, 30);
-
-        final int yAxisX = super.getWidth() / 2;
-        final int xAxisY = super.getHeight() / 2;
-
-        // draw coordinate system
-        g.setFont(DEFAULT_FONT);
-        g.drawLine(
-            X_MARGIN - 20,
-            xAxisY,
-            super.getWidth() - X_MARGIN + 20,
-            xAxisY
-        );
-        g.drawLine(
-            yAxisX,
-            super.getHeight() - Y_MARGIN - 5,
-            yAxisX,
-            Y_MARGIN
-        );
-
-        // draw arrows
-        g.drawLine(super.getWidth() - X_MARGIN + 20, xAxisY, super.getWidth() - X_MARGIN + 10, xAxisY - 5);
-        g.drawLine(super.getWidth() - X_MARGIN + 20, xAxisY, super.getWidth() - X_MARGIN + 10, xAxisY + 5);
-        g.drawLine(yAxisX, Y_MARGIN, yAxisX - 5, Y_MARGIN + 10);
-        g.drawLine(yAxisX, Y_MARGIN, yAxisX + 5, Y_MARGIN + 10);
-
-        // draw x labels
-        for (int i = -LABEL_AMOUNT_X; i <= LABEL_AMOUNT_X; i++) {
-            g.drawLine(
-                yAxisX + i * LABEL_MARGIN,
-                xAxisY - 5,
-                yAxisX + i * LABEL_MARGIN,
-                xAxisY + 5
-            );
-
-            if (i == 0) continue;
-
-            g.drawString(
-                String.valueOf(Math.round((((double) this.scaleX / LABEL_AMOUNT_X) * i) * 10D) / 10D),
-                yAxisX + i * LABEL_MARGIN - 5,
-                xAxisY + 20
-            );
-        }
-
-        // draw y labels
-        for (int i = -LABEL_AMOUNT_Y; i <= LABEL_AMOUNT_Y; i++) {
-            g.drawLine(
-                yAxisX - 5,
-                xAxisY - i * LABEL_MARGIN,
-                yAxisX + 5,
-                xAxisY - i * LABEL_MARGIN
-            );
-
-            if (i == 0) continue;
-
-            g.drawString(
-                String.valueOf(Math.round((((double) this.scaleY / LABEL_AMOUNT_Y) * i) * 10D) / 10D),
-                yAxisX - 40,
-                (xAxisY - i * LABEL_MARGIN) + 5
-            );
-        }
-
-        // draw function
-        g.setColor(Color.RED);
-        drawFunction(g, this.function, yAxisX, xAxisY);
-
-        // check if roots or extremes are enabled
-        g.setColor(Color.BLUE);
-        if (this.enableRoots) drawRoots(g, yAxisX, xAxisY);
-        if (this.enableExtremes) drawExtremes(g, yAxisX, xAxisY);
-
-        // draw marked points
-        for (@NotNull final Point point : this.markedPoints) {
-            final int x = getValueX(point.getX());
-            final int y = getValueY(point.getY());
-
-            g.fillOval(
-                x + (yAxisX - X_MARGIN) - (MARK_SIZE / 2),
-                y - (xAxisY - Y_MARGIN) - (MARK_SIZE / 2),
-                MARK_SIZE,
-                MARK_SIZE
-            );
-
-            final double xCoordinate = Math.round(point.getX() * 100D) / 100D;
-            final double yCoordinate = Math.round(point.getY() * 100D) / 100D;
-
-            g.setFont(DEFAULT_FONT.deriveFont(12F));
-            g.drawString(
-                "(" + xCoordinate + " | " + yCoordinate + ")",
-                x + (yAxisX - X_MARGIN) - 10,
-                y - (xAxisY - Y_MARGIN) - 15
-            );
-        }
-
-        // draw mouse
-        if (this.mouse != null) drawMouse(g, yAxisX, xAxisY);
-
-        // draw tangent
-        if (this.tangentFunction != null) drawTangent(g, yAxisX, xAxisY);
-
-        // check if derivation is enabled
-        g.setColor(Color.GREEN);
-        if (this.enableDerivation) drawFunction(g, this.derivation, yAxisX, xAxisY);
+        drawGraphics(g);
     }
     //</editor-fold>
 }
