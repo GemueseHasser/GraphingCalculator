@@ -212,7 +212,20 @@ public final class FunctionHandler {
      * @return Das Ergebnis der Rechnung.
      */
     public static double eval(@NotNull final String term) {
-        final String finalTerm = term.replaceAll("e", String.valueOf(Math.E)).replaceAll("π", String.valueOf(Math.PI));
+        String replacedTerm = term.replaceAll("e", String.valueOf(Math.E)).replaceAll("π", String.valueOf(Math.PI));
+
+        for (int i = 0; i < replacedTerm.length(); i++) {
+            if ((i + 1) >= replacedTerm.length()) continue;
+            if (replacedTerm.charAt(i + 1) != '(') continue;
+
+            final char currentChar = replacedTerm.charAt(i);
+
+            if (currentChar < '0' || currentChar > '9') continue;
+
+            replacedTerm = replacedTerm.substring(0, i + 1) + "*" + replacedTerm.substring(i + 1);
+        }
+
+        final String finalTerm = replacedTerm;
 
         return new Object() {
             private int pos = -1;
