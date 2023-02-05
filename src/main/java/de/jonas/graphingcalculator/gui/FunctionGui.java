@@ -101,7 +101,10 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         }
 
         // create new function handler
-        final FunctionHandler functionHandler = new FunctionHandler(functionField.getText(), getXScaling());
+        final FunctionHandler functionHandler = new FunctionHandler(
+            functionField.getText().replaceAll(",", "."),
+            getXScaling()
+        );
 
         // create draw object
         this.drawFunction = new DrawFunction(functionHandler, getXScaling(), getYScaling());
