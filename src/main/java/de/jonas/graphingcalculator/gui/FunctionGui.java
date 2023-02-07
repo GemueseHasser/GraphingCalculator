@@ -43,13 +43,26 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
     //</editor-fold>
 
 
+    //<editor-fold desc="STATIC FIELDS">
+    /** Die als letztes gezeichnete Funktion des Nutzers. */
+    @NotNull
+    private static String lastFunction = "";
+    /** Die als letztes verwendete x-Achsen-Skalierung des Nutzers. */
+    @NotNull
+    private static String lastScalingX = "10";
+    /** Die als letztes verwendete y-Achsen-Skalierung des Nutzers. */
+    @NotNull
+    private static String lastScalingY = "10";
+    //</editor-fold>
+
+
     //<editor-fold desc="LOCAL FIELDS">
     /** Das Textfeld, in welchem die Skalierung der x-Achse angegeben wird. */
     @NotNull
-    private final JTextField xScalingField = new JTextField("10", 10);
+    private final JTextField xScalingField = new JTextField(lastScalingX, 10);
     /** Das Textfeld, in welchem die Skalierung der y-Achse angegeben wird. */
     @NotNull
-    private final JTextField yScalingField = new JTextField("10", 10);
+    private final JTextField yScalingField = new JTextField(lastScalingY, 10);
     /** Die Funktion, welche alle grafischen Inhalte auf das Fenster zeichnet. */
     @Nullable
     private final DrawFunction drawFunction;
@@ -75,7 +88,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         messagePanel[2] = new JPanel();
 
         // add function field
-        final JTextField functionField = new JTextField(10);
+        final JTextField functionField = new JTextField(lastFunction, 10);
         messagePanel[0].add(new JLabel("f(x) = "));
         messagePanel[0].add(functionField);
 
@@ -105,6 +118,11 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             functionField.getText().replaceAll(",", "."),
             getXScaling()
         );
+
+        // set last values
+        lastFunction = functionHandler.getFunction();
+        lastScalingX = String.valueOf(getXScaling());
+        lastScalingY = String.valueOf(getYScaling());
 
         // create draw object
         this.drawFunction = new DrawFunction(functionHandler, getXScaling(), getYScaling());
@@ -210,7 +228,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
 
             try {
                 ImageIO.write(this.drawFunction.getGraphicsAsImage(), "PNG", file);
-            } catch (@NotNull final  IOException ex) {
+            } catch (@NotNull final IOException ex) {
                 throw new RuntimeException(ex);
             }
         });

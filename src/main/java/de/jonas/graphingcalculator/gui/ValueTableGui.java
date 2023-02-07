@@ -49,16 +49,32 @@ public final class ValueTableGui extends Gui {
     //</editor-fold>
 
 
+    //<editor-fold desc="STATIC FIELDS">
+    /** Die als letztes verwendete Funktion des Nutzers. */
+    @NotNull
+    private static String lastFunction = "";
+    /** Der als letztes angegebene kleinste x-Wert der Wertetabelle. */
+    @NotNull
+    private static String lastXMin = "-5";
+    /** Der als letztes angegebene größte x-Wert der Wertetabelle. */
+    @NotNull
+    private static String lastXMax = "5";
+    /** Die als letztes angegebene Schrittweite der Wertetabelle. */
+    @NotNull
+    private static String lastIncrement = "1";
+    //</editor-fold>
+
+
     //<editor-fold desc="LOCAL FIELDS">
-    /** Das Textfeld, in welchem der kleinste x-Wert angegeben wird. */
+    /** Das Textfeld, in welchem der kleinste x-Wert der Wertetabelle angegeben wird. */
     @NotNull
-    private final JTextField xMinField = new JTextField("-5", 10);
-    /** Das Textfeld, in welchem der größte x-Wert angegeben wird. */
+    private final JTextField xMinField = new JTextField(lastXMin, 10);
+    /** Das Textfeld, in welchem der größte x-Wert der Wertetabelle angegeben wird. */
     @NotNull
-    private final JTextField xMaxField = new JTextField("5", 10);
-    /** Das Textfeld, in welchem die Schrittweite angegeben wird. */
+    private final JTextField xMaxField = new JTextField(lastXMax, 10);
+    /** Das Textfeld, in welchem die Schrittweite der Wertetabelle angegeben wird. */
     @NotNull
-    private final JTextField incrementField = new JTextField("1", 10);
+    private final JTextField incrementField = new JTextField(lastIncrement, 10);
     /** Die {@link Map}, in der alle Werte dieser Wertetabelle abgespeichert werden. */
     @NotNull
     private final NavigableMap<Double, Double> values = new TreeMap<>();
@@ -83,7 +99,7 @@ public final class ValueTableGui extends Gui {
         messagePanel[3] = new JPanel();
 
         // add function field
-        final JTextField functionField = new JTextField(10);
+        final JTextField functionField = new JTextField(lastFunction, 10);
         messagePanel[0].add(new JLabel("f(x) = "));
         messagePanel[0].add(functionField);
 
@@ -114,6 +130,12 @@ public final class ValueTableGui extends Gui {
             functionField.getText().replaceAll(",", "."),
             0
         );
+
+        // set last values
+        lastFunction = functionHandler.getFunction();
+        lastXMin = String.valueOf(getXMin());
+        lastXMax = String.valueOf(getXMax());
+        lastIncrement = String.valueOf(getIncrement());
 
         // create function label to display the function
         final JLabel functionLabel = new JLabel(functionHandler.getFunction(), JLabel.CENTER);
@@ -204,9 +226,9 @@ public final class ValueTableGui extends Gui {
     }
 
     /**
-     * Gibt den kleinsten x-Wert unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
+     * Gibt den kleinsten x-Wert der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
      *
-     * @return Der kleinste x-Wert unter Berücksichtigung einer falschen Eingabe des Nutzers.
+     * @return Der kleinste x-Wert der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers.
      */
     private int getXMin() {
         try {
@@ -217,9 +239,9 @@ public final class ValueTableGui extends Gui {
     }
 
     /**
-     * Gibt den größten x-Wert unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
+     * Gibt den größten x-Wert der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
      *
-     * @return Der größte x-Wert unter Berücksichtigung einer falschen Eingabe des Nutzers.
+     * @return Der größte x-Wert der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers.
      */
     private int getXMax() {
         try {
@@ -230,13 +252,13 @@ public final class ValueTableGui extends Gui {
     }
 
     /**
-     * Gibt die Schrittweite unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
+     * Gibt die Schrittweite der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers zurück.
      *
-     * @return Die Schrittweite unter Berücksichtigung einer falschen Eingabe des Nutzers.
+     * @return Die Schrittweite der Wertetabelle unter Berücksichtigung einer falschen Eingabe des Nutzers.
      */
     private double getIncrement() {
         try {
-            return Double.parseDouble(this.incrementField.getText());
+            return Double.parseDouble(this.incrementField.getText().replaceAll(",", "."));
         } catch (@NotNull final NumberFormatException ignored) {
             return 1D;
         }
