@@ -199,7 +199,11 @@ public final class FunctionHandler {
         final double m = Math.round(((nextY - previousY) / (nextX - previousX)) * 100D) / 100D;
         final double b = Math.round((y - m * x) * 100D) / 100D;
 
-        return m + " * x " + (b < 0 ? "- " : "+ ") + Math.abs(b);
+        // return function without b if b is 0
+        if (b == 0) return m + "x";
+
+        // return function with b
+        return m + "x " + (b < 0 ? "- " : "+ ") + Math.abs(b);
     }
 
     //<editor-fold desc="utility">
