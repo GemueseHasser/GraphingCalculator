@@ -36,7 +36,7 @@ public final class FunctionHandler {
      * {@link NavigableMap} sind alle x-Werte den entsprechenden y-Werten zugeordnet.
      *
      * @return Eine {@link NavigableMap}, welche alle Funktionswerte im Bereich der x-Achsen-Skalierung in Abständen von
-     *     0.1 beinhaltet.
+     *     0.001 beinhaltet.
      */
     @NotNull
     public NavigableMap<Double, Double> getFunctionValues() {
@@ -224,7 +224,7 @@ public final class FunctionHandler {
 
             final char currentChar = replacedTerm.charAt(i);
 
-            if (currentChar < '0' || currentChar > '9') continue;
+            if ((currentChar < '0' || currentChar > '9') && currentChar != ')') continue;
 
             replacedTerm = replacedTerm.substring(0, i + 1) + "*" + replacedTerm.substring(i + 1);
         }
