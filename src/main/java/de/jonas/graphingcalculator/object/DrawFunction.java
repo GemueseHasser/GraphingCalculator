@@ -104,7 +104,6 @@ public final class DrawFunction extends JLabel {
 
         // calculate draw tolerance
         final double xTolerance = (double) scaleX / 10;
-        final double yTolerance = (double) scaleY / 10;
 
         // filter function values
         for (@NotNull final Map.Entry<Double, Double> functionEntry : functionHandler.getFunctionValues().entrySet()) {
@@ -113,7 +112,7 @@ public final class DrawFunction extends JLabel {
             final double y = functionEntry.getValue();
 
             // check if values are out of bounds
-            if (x > scaleX + xTolerance || x < -scaleX - xTolerance || y > scaleY + yTolerance || y < -scaleY - yTolerance) {
+            if (x > scaleX + xTolerance || x < -scaleX - xTolerance) {
                 continue;
             }
 
@@ -128,7 +127,7 @@ public final class DrawFunction extends JLabel {
             final double y = derivationEntry.getValue();
 
             // check if values are out of bounds
-            if (x > scaleX + xTolerance || x < -scaleX - xTolerance || y > scaleY + yTolerance || y < -scaleY - yTolerance) {
+            if (x > scaleX + xTolerance || x < -scaleX - xTolerance) {
                 continue;
             }
 
