@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -40,6 +41,8 @@ public final class DrawFunction extends JLabel {
     private static final int LABEL_AMOUNT_Y = 10;
     /** Die Größe jeder Markierung. */
     private static final int MARK_SIZE = 10;
+    /** Die Menge an Ableitungen, die angeboten werden soll. */
+    private static final int DERIVATION_AMOUNT = 4;
     //</editor-fold>
 
 
@@ -50,9 +53,10 @@ public final class DrawFunction extends JLabel {
     /** Alle Funktionswerte, aus denen dann eine Funktion gezeichnet wird. */
     @NotNull
     private final NavigableMap<Double, Double> function;
-    /** Alle Funktionswerte der Ableitung der Funktion. */
+    /** Die verschiedenen Ableitungen der Funktion gekoppelt an den Zustand, ob sie angezeigt werden sollen. */
+    @Getter
     @NotNull
-    private final NavigableMap<Double, Double> derivation;
+    private final LinkedHashMap<Integer, Derivation> derivations = new LinkedHashMap<>();
     /** Eine Liste, die alle Punkte beinhaltet, die besonders hervorgehoben werden sollen in der Funktion. */
     @NotNull
     private final LinkedList<Point> markedPoints = new LinkedList<>();
@@ -76,9 +80,6 @@ public final class DrawFunction extends JLabel {
     /** Der Zustand, ob die Extremstellen angezeigt werden sollen oder nicht. */
     @Setter
     private boolean enableExtremes;
-    /** Der Zustand, ob die Ableitung angezeigt werden soll oder nicht. */
-    @Setter
-    private boolean enableDerivation;
     //</editor-fold>
 
 
@@ -100,7 +101,6 @@ public final class DrawFunction extends JLabel {
     ) {
         // create temp map
         final NavigableMap<Double, Double> filteredFunction = new TreeMap<>();
-        final NavigableMap<Double, Double> filteredDerivation = new TreeMap<>();
 
         // calculate draw tolerance
         final double xTolerance = (double) scaleX / 10;
@@ -120,25 +120,17 @@ public final class DrawFunction extends JLabel {
             filteredFunction.put(x, y);
         }
 
-        // filter derivation values
-        for (@NotNull final Map.Entry<Double, Double> derivationEntry : functionHandler.getDerivationValues().entrySet()) {
-            // get current values from entry
-            final double x = derivationEntry.getKey();
-            final double y = derivationEntry.getValue();
+        // set derivations
+        NavigableMap<Double, Double> lastDerivation = FunctionHandler.getDerivationValues(functionHandler.getFunctionValues());
 
-            // check if values are out of bounds
-            if (x > scaleX + xTolerance || x < -scaleX - xTolerance) {
-                continue;
-            }
-
-            // mark values as filtered
-            filteredDerivation.put(x, y);
+        for (int i = 0; i < DERIVATION_AMOUNT; i++) {
+            this.derivations.put(i, new Derivation(lastDerivation));
+            lastDerivation = FunctionHandler.getDerivationValues(lastDerivation);
         }
 
         // initialize variables
         this.functionHandler = functionHandler;
         this.function = filteredFunction;
-        this.derivation = filteredDerivation;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
     }
@@ -310,9 +302,16 @@ public final class DrawFunction extends JLabel {
         // draw tangent
         if (this.tangentFunction != null) drawTangent(g, yAxisX, xAxisY);
 
-        // check if derivation is enabled
+        // check if derivations are enabled
         g.setColor(Color.GREEN);
-        if (this.enableDerivation) drawFunction(g, this.derivation, yAxisX, xAxisY);
+
+        for (@NotNull final Map.Entry<Integer, Derivation> derivationEntry : this.derivations.entrySet()) {
+            final Derivation derivation = derivationEntry.getValue();
+
+            if (!derivation.isDraw()) continue;
+
+            drawFunction(g, derivation.getDerivationValues(), yAxisX, xAxisY);
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package de.jonas.graphingcalculator.gui;
 
 import de.jonas.graphingcalculator.handler.FileHandler;
 import de.jonas.graphingcalculator.handler.FunctionHandler;
+import de.jonas.graphingcalculator.object.Derivation;
 import de.jonas.graphingcalculator.object.DrawFunction;
 import de.jonas.graphingcalculator.object.Gui;
 import org.jetbrains.annotations.NotNull;
@@ -153,11 +154,17 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         });
 
         // create popup-menu item to show derivation
-        final JRadioButtonMenuItem showDerivationItem = new JRadioButtonMenuItem("Ableitung anzeigen", false);
-        showDerivationItem.addChangeListener(e -> {
-            this.drawFunction.setEnableDerivation(showDerivationItem.isSelected());
-            this.drawFunction.repaint();
-        });
+        final JRadioButtonMenuItem[] derivationItems = new JRadioButtonMenuItem[this.drawFunction.getDerivations().size()];
+        for (int i = 0; i < this.drawFunction.getDerivations().size(); i++) {
+            derivationItems[i] = new JRadioButtonMenuItem((i + 1) + ". Ableitung anzeigen");
+
+            final int finalI = i;
+            derivationItems[i].addChangeListener(e -> {
+                final Derivation derivation = this.drawFunction.getDerivations().get(finalI);
+                derivation.setDraw(derivationItems[finalI].isSelected());
+                this.drawFunction.repaint();
+            });
+        }
 
         // create popup-menu item to mark custom points
         final JMenuItem markPointItem = new JMenuItem("Punkt einzeichnen");
@@ -246,7 +253,10 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
 
         // create menu to display derivations in the menu-bar
         final JMenu derivationMenu = new JMenu("Ableitung");
-        derivationMenu.add(showDerivationItem);
+
+        for (@NotNull final JRadioButtonMenuItem derivationItem : derivationItems) {
+            derivationMenu.add(derivationItem);
+        }
 
         // create menu to display extras in the menu-bar
         final JMenu extraMenu = new JMenu("Extra");

@@ -51,41 +51,6 @@ public final class FunctionHandler {
     }
 
     /**
-     * Gibt alle Funktionswerte der Ableitung dieser Funktion im Bereich der x-Achsen-Skalierung wieder.
-     *
-     * @return Alle Funktionswerte der Ableitung im Bereich der x-Achsen-Skalierung.
-     */
-    @NotNull
-    public NavigableMap<Double, Double> getDerivationValues() {
-        final NavigableMap<Double, Double> derivationValues = new TreeMap<>();
-        final NavigableMap<Double, Double> functionValues = getFunctionValues();
-
-        for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
-
-            // get current x
-            final double x = functionValue.getKey();
-
-            // check if next or previous entry is preset
-            if (functionValues.lowerEntry(x) == null) continue;
-            if (functionValues.higherEntry(x) == null) break;
-
-            final Map.Entry<Double, Double> nextEntry = functionValues.higherEntry(x);
-            final Map.Entry<Double, Double> previousEntry = functionValues.lowerEntry(x);
-
-            // get next and previous y
-            final double nextX = nextEntry.getKey();
-            final double nextY = nextEntry.getValue();
-            final double previousX = previousEntry.getKey();
-            final double previousY = previousEntry.getValue();
-
-            derivationValues.put(x, (nextY - previousY) / (nextX - previousX));
-        }
-
-        return derivationValues;
-    }
-
-    /**
      * Gibt alle Nullstellen dieser Funktion in Form einer {@link Map} zurück.
      *
      * @return Alle Nullstellen dieser Funktion in Form einer {@link Map}.
@@ -338,6 +303,42 @@ public final class FunctionHandler {
                 return x;
             }
         }.parse();
+    }
+
+    /**
+     * Gibt alle Funktionswerte der Ableitung einer Funktion, dessen Funktionswerte bekannt sind wieder.
+     *
+     * @return Alle Funktionswerte der Ableitung einer Funktion, dessen Funktionswerte bekannt sind.
+     */
+    @NotNull
+    public static NavigableMap<Double, Double> getDerivationValues(
+        @NotNull final NavigableMap<Double, Double> function
+    ) {
+        final NavigableMap<Double, Double> derivationValues = new TreeMap<>();
+
+        for (@NotNull final Map.Entry<Double, Double> functionValue : function.entrySet()) {
+            if (functionValue.getValue().isNaN()) continue;
+
+            // get current x
+            final double x = functionValue.getKey();
+
+            // check if next or previous entry is preset
+            if (function.lowerEntry(x) == null) continue;
+            if (function.higherEntry(x) == null) break;
+
+            final Map.Entry<Double, Double> nextEntry = function.higherEntry(x);
+            final Map.Entry<Double, Double> previousEntry = function.lowerEntry(x);
+
+            // get next and previous y
+            final double nextX = nextEntry.getKey();
+            final double nextY = nextEntry.getValue();
+            final double previousX = previousEntry.getKey();
+            final double previousY = previousEntry.getValue();
+
+            derivationValues.put(x, (nextY - previousY) / (nextX - previousX));
+        }
+
+        return derivationValues;
     }
     //</editor-fold>
 
