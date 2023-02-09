@@ -11,11 +11,15 @@ import org.jetbrains.annotations.Range;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 
-import java.awt.event.ActionListener;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -126,36 +130,38 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
 
         // create draw object
         this.drawFunction = new DrawFunction(functionHandler, getXScaling(), getYScaling());
-        this.drawFunction.setBounds(0, 0, WIDTH, HEIGHT);
+        this.drawFunction.setBounds(0, 0, WIDTH, HEIGHT - 21);
         this.drawFunction.setVisible(true);
 
-        final JButton rootsButton = getOptionButton("Nullstellen berechnen", 0, e -> {
-            final JButton source = (JButton) e.getSource();
+        // create option-menu head
+        final JMenuItem headItem = new JMenuItem();
+        headItem.setEnabled(false);
+        headItem.setText("<html><a style='color: red;'>Optionen:</a></html>");
 
-            if (source.getText().equalsIgnoreCase("Nullstellen berechnen")) {
-                this.drawFunction.setEnableRoots(true);
-                source.setText("Nullstellen ausblenden");
-            } else {
-                this.drawFunction.setEnableRoots(false);
-                source.setText("Nullstellen berechnen");
-            }
-
+        // create popup-menu item to show roots
+        final JRadioButtonMenuItem showRootsItem = new JRadioButtonMenuItem("Nullstellen anzeigen", false);
+        showRootsItem.addChangeListener(e -> {
+            this.drawFunction.setEnableRoots(showRootsItem.isSelected());
             this.drawFunction.repaint();
         });
-        final JButton extremesButton = getOptionButton("Extremstellen berechnen", 1, e -> {
-            final JButton source = (JButton) e.getSource();
 
-            if (source.getText().equalsIgnoreCase("Extremstellen berechnen")) {
-                this.drawFunction.setEnableExtremes(true);
-                source.setText("Extremstellen ausblenden");
-            } else {
-                this.drawFunction.setEnableExtremes(false);
-                source.setText("Extremstellen berechnen");
-            }
-
+        // create popup-menu item to show extremes
+        final JRadioButtonMenuItem showExtremesItem = new JRadioButtonMenuItem("Extremstellen anzeigen", false);
+        showExtremesItem.addChangeListener(e -> {
+            this.drawFunction.setEnableExtremes(showExtremesItem.isSelected());
             this.drawFunction.repaint();
         });
-        final JButton markPointButton = getOptionButton("Punkt einzeichnen", 2, e -> {
+
+        // create popup-menu item to show derivation
+        final JRadioButtonMenuItem showDerivationItem = new JRadioButtonMenuItem("Ableitung anzeigen", false);
+        showDerivationItem.addChangeListener(e -> {
+            this.drawFunction.setEnableDerivation(showDerivationItem.isSelected());
+            this.drawFunction.repaint();
+        });
+
+        // create popup-menu item to mark custom points
+        final JMenuItem markPointItem = new JMenuItem("Punkt einzeichnen");
+        markPointItem.addActionListener(e -> {
             final String input = JOptionPane.showInputDialog(
                 null,
                 "X-Wert:",
@@ -173,18 +179,22 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             } catch (@NotNull final NumberFormatException ignored) {
             }
         });
-        final JButton removeLastMarkedPointButton = getOptionButton("Letzten Punkt entfernen", 3, e -> {
+
+        // create popup-menu item to remove last point
+        final JMenuItem removeLastPointItem = new JMenuItem("Letzten Punkt entfernen");
+        removeLastPointItem.addActionListener(e -> {
             this.drawFunction.removeLastMarkedPoint();
             this.drawFunction.repaint();
         });
-        final JButton tangentButton = getOptionButton("Tangente anlegen", 4, e -> {
-            final JButton source = (JButton) e.getSource();
 
-            if (!source.getText().equalsIgnoreCase("Tangente anlegen")) {
+        // create popup-menu item to draw custom tangent
+        final JMenuItem tangentItem = new JMenuItem("Tangente anlegen");
+        tangentItem.addActionListener(e -> {
+            if (!tangentItem.getText().equalsIgnoreCase("Tangente anlegen")) {
                 this.drawFunction.setTangentFunction(null);
                 this.drawFunction.repaint();
 
-                source.setText("Tangente anlegen");
+                tangentItem.setText("Tangente anlegen");
                 return;
             }
 
@@ -203,25 +213,16 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
                 this.drawFunction.setTangentFunction(functionHandler.getTangentFunction(x));
                 this.drawFunction.repaint();
 
-                source.setText("Tangente ausblenden");
+                tangentItem.setText("Tangente ausblenden");
             } catch (@NotNull final NumberFormatException ignored) {
             }
         });
-        final JButton derivationButton = getOptionButton("Ableitung zeichnen", 5, e -> {
-            final JButton source = (JButton) e.getSource();
 
-            if (source.getText().equalsIgnoreCase("Ableitung zeichnen")) {
-                this.drawFunction.setEnableDerivation(true);
-                source.setText("Ableitung ausblenden");
-            } else {
-                this.drawFunction.setEnableDerivation(false);
-                source.setText("Ableitung zeichnen");
-            }
-
-            this.drawFunction.repaint();
-        });
-
-        final JButton saveToImageButton = getOptionButton("Als Bild speichern", 18, e -> {
+        // create button to save current function-gui as png
+        final JButton saveToImageButton = new JButton("Als Bild speichern");
+        saveToImageButton.setFocusable(false);
+        saveToImageButton.setBounds(WIDTH - 220, HEIGHT - 100, 190, 30);
+        saveToImageButton.addActionListener(e -> {
             final File file = FileHandler.getSelectedSaveDir();
 
             if (file == null) return;
@@ -233,18 +234,46 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             }
         });
 
-        // add components
-        super.add(rootsButton);
-        super.add(extremesButton);
-        super.add(markPointButton);
-        super.add(removeLastMarkedPointButton);
-        super.add(tangentButton);
-        super.add(derivationButton);
+        // create menu to display points in the menu-bar
+        final JMenu pointMenu = new JMenu("Punkte");
+        pointMenu.add(showRootsItem);
+        pointMenu.add(showExtremesItem);
+
+        // create menu to display marks in the menu-bar
+        final JMenu markMenu = new JMenu("Markierungen");
+        markMenu.add(markPointItem);
+        markMenu.add(removeLastPointItem);
+
+        // create menu to display derivations in the menu-bar
+        final JMenu derivationMenu = new JMenu("Ableitung");
+        derivationMenu.add(showDerivationItem);
+
+        // create menu to display extras in the menu-bar
+        final JMenu extraMenu = new JMenu("Extra");
+        extraMenu.add(tangentItem);
+
+        // create menu-bar
+        final JMenuBar menuBar = new JMenuBar();
+        menuBar.setOpaque(true);
+        menuBar.setBackground(Color.LIGHT_GRAY);
+
+        menuBar.add(pointMenu);
+        menuBar.add(markMenu);
+        menuBar.add(derivationMenu);
+        menuBar.add(extraMenu);
+
+        // set menu-bar
+        super.setJMenuBar(menuBar);
+
+        // add components to gui
         super.add(saveToImageButton);
         super.add(this.drawFunction);
 
+        // add listener to gui
         super.addMouseListener(this);
         super.addMouseMotionListener(this);
+
+        // show gui
         super.setVisible(true);
     }
     //</editor-fold>
@@ -276,30 +305,6 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         }
     }
 
-    /**
-     * Gibt einen positionierten Button mit entsprechendem Text und entsprechendem {@link ActionListener} zurück.
-     *
-     * @param text           Der Text des Buttons.
-     * @param count          Die Nummer des Buttons beginnend bei 0.
-     * @param actionListener Der {@link ActionListener}, welcher ausgeführt werden soll, wenn der Button angeklickt
-     *                       wird.
-     *
-     * @return Ein positionierter Button mit entsprechendem Text und entsprechendem {@link ActionListener}.
-     */
-    @NotNull
-    private JButton getOptionButton(
-        @NotNull final String text,
-        @Range(from = 0, to = Integer.MAX_VALUE) final int count,
-        @NotNull final ActionListener actionListener
-    ) {
-        final JButton button = new JButton(text);
-        button.setFocusable(false);
-        button.setBounds(WIDTH - 220, 20 + (count * 40), 190, 30);
-        button.addActionListener(actionListener);
-
-        return button;
-    }
-
     //<editor-fold desc="implementation">
     @Override
     public void mousePressed(@NotNull final MouseEvent e) {
@@ -317,9 +322,11 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
 
     @Override
     public void mouseDragged(@NotNull final MouseEvent e) {
+        // check if the mouse has clicked before
         assert this.drawFunction != null;
         if (this.drawFunction.getMouse() == null) return;
 
+        // handle mouse-pressed
         this.drawFunction.handleMousePressed(e.getX() - 7);
         this.drawFunction.repaint();
     }
