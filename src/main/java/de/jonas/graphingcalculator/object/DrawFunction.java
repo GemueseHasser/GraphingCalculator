@@ -42,7 +42,7 @@ public final class DrawFunction extends JLabel {
     /** Die Größe jeder Markierung. */
     private static final int MARK_SIZE = 10;
     /** Die Menge an Ableitungen, die angeboten werden soll. */
-    private static final int DERIVATION_AMOUNT = 4;
+    private static final int DERIVATION_AMOUNT = 3;
     //</editor-fold>
 
 
@@ -121,14 +121,14 @@ public final class DrawFunction extends JLabel {
         }
 
         // set derivations
-        NavigableMap<Double, Double> lastDerivation = FunctionHandler.getDerivationValues(functionHandler.getFunctionValues());
+        NavigableMap<Double, Double> lastDerivation = FunctionHandler.getDerivationValues(filteredFunction);
 
         for (int i = 0; i < DERIVATION_AMOUNT; i++) {
             this.derivations.put(i, new Derivation(lastDerivation));
             lastDerivation = FunctionHandler.getDerivationValues(lastDerivation);
         }
 
-        // initialize variables
+        // initialize variables (x-1)(x+2)(x-3)^2
         this.functionHandler = functionHandler;
         this.function = filteredFunction;
         this.scaleX = scaleX;
