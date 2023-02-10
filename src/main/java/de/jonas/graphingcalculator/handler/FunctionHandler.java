@@ -89,35 +89,23 @@ public final class FunctionHandler {
         return roots;
     }
 
-    /**
-     * Gibt alle Extremstellen dieser Funktion in Form einer {@link Map} zurück.
-     *
-     * @return Alle Extremstellen dieser Funktion in Form einer {@link Map}.
-     */
     @NotNull
-    public Map<Double, Double> getExtremes() {
-        final Map<Double, Double> extremes = new HashMap<>();
+    public Map<Double, Double> getTurningPoints() {
+        final Map<Double, Double> turningPoints = new HashMap<>();
+
         final NavigableMap<Double, Double> functionValues = getFunctionValues();
+        final NavigableMap<Double, Double> derivationValues = getDerivationValues(functionValues);
 
-        for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
+        final Map<Double, Double> derivationExtremes = getExtremes(derivationValues);
 
-            // get current values
-            final double x = functionValue.getKey();
-            final double y = functionValue.getValue();
+        for (@NotNull final Map.Entry<Double, Double> derivationExtremesEntry : derivationExtremes.entrySet()) {
+            final double x = derivationExtremesEntry.getKey();
+            final double y = getFunctionValue(x);
 
-            // check if next or previous entry is preset
-            if (functionValues.lowerEntry(x) == null) continue;
-            if (functionValues.higherEntry(x) == null) break;
-
-            // get next and previous y
-            final double nextY = functionValues.higherEntry(x).getValue();
-            final double previousY = functionValues.lowerEntry(x).getValue();
-
-            if ((previousY < y && nextY < y) || (previousY > y && nextY > y)) extremes.put(x, y);
+            turningPoints.put(x, y);
         }
 
-        return extremes;
+        return turningPoints;
     }
 
     /**
@@ -303,6 +291,36 @@ public final class FunctionHandler {
                 return x;
             }
         }.parse();
+    }
+
+    /**
+     * Gibt alle Extremstellen dieser Funktion in Form einer {@link Map} zurück.
+     *
+     * @return Alle Extremstellen dieser Funktion in Form einer {@link Map}.
+     */
+    @NotNull
+    public static Map<Double, Double> getExtremes(@NotNull final NavigableMap<Double, Double> functionValues) {
+        final Map<Double, Double> extremes = new HashMap<>();
+
+        for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
+            if (functionValue.getValue().isNaN()) continue;
+
+            // get current values
+            final double x = functionValue.getKey();
+            final double y = functionValue.getValue();
+
+            // check if next or previous entry is preset
+            if (functionValues.lowerEntry(x) == null) continue;
+            if (functionValues.higherEntry(x) == null) break;
+
+            // get next and previous y
+            final double nextY = functionValues.higherEntry(x).getValue();
+            final double previousY = functionValues.lowerEntry(x).getValue();
+
+            if ((previousY < y && nextY < y) || (previousY > y && nextY > y)) extremes.put(x, y);
+        }
+
+        return extremes;
     }
 
     /**

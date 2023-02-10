@@ -134,11 +134,6 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         this.drawFunction.setBounds(0, 0, WIDTH, HEIGHT - 21);
         this.drawFunction.setVisible(true);
 
-        // create option-menu head
-        final JMenuItem headItem = new JMenuItem();
-        headItem.setEnabled(false);
-        headItem.setText("<html><a style='color: red;'>Optionen:</a></html>");
-
         // create popup-menu item to show roots
         final JRadioButtonMenuItem showRootsItem = new JRadioButtonMenuItem("Nullstellen anzeigen", false);
         showRootsItem.addChangeListener(e -> {
@@ -150,6 +145,13 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         final JRadioButtonMenuItem showExtremesItem = new JRadioButtonMenuItem("Extremstellen anzeigen", false);
         showExtremesItem.addChangeListener(e -> {
             this.drawFunction.setEnableExtremes(showExtremesItem.isSelected());
+            this.drawFunction.repaint();
+        });
+
+        // create popup-menu item to show turning points
+        final JRadioButtonMenuItem showTurningPointsItem = new JRadioButtonMenuItem("Wendepunkte anzeigen", false);
+        showTurningPointsItem.addChangeListener(e -> {
+            this.drawFunction.setEnableTurningPoints(showTurningPointsItem.isSelected());
             this.drawFunction.repaint();
         });
 
@@ -245,6 +247,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         final JMenu pointMenu = new JMenu("Punkte");
         pointMenu.add(showRootsItem);
         pointMenu.add(showExtremesItem);
+        pointMenu.add(showTurningPointsItem);
 
         // create menu to display marks in the menu-bar
         final JMenu markMenu = new JMenu("Markierungen");

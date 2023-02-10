@@ -80,6 +80,9 @@ public final class DrawFunction extends JLabel {
     /** Der Zustand, ob die Extremstellen angezeigt werden sollen oder nicht. */
     @Setter
     private boolean enableExtremes;
+    /** Der Zustand, ob die Wendepunkte angezeigt werden sollen oder nicht. */
+    @Setter
+    private boolean enableTurningPoints;
     //</editor-fold>
 
 
@@ -268,10 +271,11 @@ public final class DrawFunction extends JLabel {
         g.setColor(Color.RED);
         drawFunction(g, this.function, yAxisX, xAxisY);
 
-        // check if roots or extremes are enabled
+        // check if roots, extremes or turning points are enabled
         g.setColor(Color.BLUE);
         if (this.enableRoots) drawRoots(g, yAxisX, xAxisY);
         if (this.enableExtremes) drawExtremes(g, yAxisX, xAxisY);
+        if (this.enableTurningPoints) drawTurningPoints(g, yAxisX, xAxisY);
 
         // draw marked points
         for (@NotNull final Point point : this.markedPoints) {
@@ -297,7 +301,7 @@ public final class DrawFunction extends JLabel {
         }
 
         // draw mouse
-        if (this.mouse != null) drawMouse(g, yAxisX, xAxisY);
+        if (this.mouse != null) drawPoint(this.mouse, g, yAxisX, xAxisY);
 
         // draw tangent
         if (this.tangentFunction != null) drawTangent(g, yAxisX, xAxisY);
@@ -347,6 +351,38 @@ public final class DrawFunction extends JLabel {
      */
     private int getValueY(final double y) {
         return (int) (super.getHeight() - Y_MARGIN - (y * LABEL_MARGIN / ((double) this.scaleY / LABEL_AMOUNT_Y)));
+    }
+
+    /**
+     * Zeichnet einen bestimmten {@link Point Punkt} in dieses Koordinatensystem.
+     *
+     * @param point  Der {@link Point Punkt}, der in diesem Koordinatensystem eingezeichnet werden soll.
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param yAxisX Die x-Koordinate der y-Achse.
+     * @param xAxisY Die y-Koordinate der x-Achse.
+     */
+    private void drawPoint(
+        @NotNull final Point point,
+        @NotNull final Graphics g,
+        @Range(from = 0, to = Integer.MAX_VALUE) final int yAxisX,
+        @Range(from = 0, to = Integer.MAX_VALUE) final int xAxisY
+    ) {
+        g.fillOval(
+            getValueX(point.getX()) + (yAxisX - X_MARGIN) - (MARK_SIZE / 2),
+            getValueY(point.getY()) - (xAxisY - Y_MARGIN) - (MARK_SIZE / 2),
+            MARK_SIZE,
+            MARK_SIZE
+        );
+
+        final double xCoordinate = Math.round(point.getX() * 100D) / 100D;
+        final double yCoordinate = Math.round(point.getY() * 100D) / 100D;
+
+        g.setFont(DEFAULT_FONT.deriveFont(12F));
+        g.drawString(
+            "(" + xCoordinate + " | " + yCoordinate + ")",
+            getValueX(point.getX()) + (yAxisX - X_MARGIN) - 10,
+            getValueY(point.getY()) - (xAxisY - Y_MARGIN) - 15
+        );
     }
 
     /**
@@ -400,66 +436,33 @@ public final class DrawFunction extends JLabel {
         @Range(from = 0, to = Integer.MAX_VALUE) final int xAxisY
     ) {
         // get extremes
-        final Map<Double, Double> extremes = this.functionHandler.getExtremes();
+        final Map<Double, Double> extremes = FunctionHandler.getExtremes(this.function);
 
-        // draw roots
+        // draw extremes
         for (@NotNull final Map.Entry<Double, Double> extremeEntry : extremes.entrySet()) {
-            final int x = getValueX(extremeEntry.getKey());
-            final int y = getValueY(extremeEntry.getValue());
-
-            g.fillOval(
-                x + (yAxisX - X_MARGIN) - (MARK_SIZE / 2),
-                y - (xAxisY - Y_MARGIN) - (MARK_SIZE / 2),
-                MARK_SIZE,
-                MARK_SIZE
-            );
-
-            final double xCoordinate = Math.round(extremeEntry.getKey() * 100D) / 100D;
-            final double yCoordinate = Math.round(extremeEntry.getValue() * 100D) / 100D;
-
-            g.setFont(DEFAULT_FONT.deriveFont(12F));
-            g.drawString(
-                "(" + xCoordinate + " | " + yCoordinate + ")",
-                x + (yAxisX - X_MARGIN) - 10,
-                y - (xAxisY - Y_MARGIN) - 15
-            );
+            drawPoint(new Point(extremeEntry.getKey(), extremeEntry.getValue()), g, yAxisX, xAxisY);
         }
     }
 
     /**
-     * Zeichnet den zuletzt gespeicherten Punkt der Maus ein, solange dieser nicht {@code null} ist.
+     * Zeichnet alle Wendepunkte der Funktion mit ihren Koordinaten ein.
      *
      * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
      * @param yAxisX Die x-Koordinate der y-Achse.
      * @param xAxisY Die y-Koordinate der x-Achse.
      */
-    private void drawMouse(
+    private void drawTurningPoints(
         @NotNull final Graphics g,
         @Range(from = 0, to = Integer.MAX_VALUE) final int yAxisX,
         @Range(from = 0, to = Integer.MAX_VALUE) final int xAxisY
     ) {
-        assert this.mouse != null;
-        final Point mouse = this.mouse;
+        // get turning points
+        final Map<Double, Double> turningPoints = this.functionHandler.getTurningPoints();
 
-        final int x = getValueX(mouse.getX());
-        final int y = getValueY(mouse.getY());
-
-        g.fillOval(
-            x + (yAxisX - X_MARGIN) - (MARK_SIZE / 2),
-            y - (xAxisY - Y_MARGIN) - (MARK_SIZE / 2),
-            MARK_SIZE,
-            MARK_SIZE
-        );
-
-        final double xCoordinate = Math.round(mouse.getX() * 100D) / 100D;
-        final double yCoordinate = Math.round(mouse.getY() * 100D) / 100D;
-
-        g.setFont(DEFAULT_FONT.deriveFont(12F));
-        g.drawString(
-            "(" + xCoordinate + " | " + yCoordinate + ")",
-            x + (yAxisX - X_MARGIN) - 10,
-            y - (xAxisY - Y_MARGIN) - 15
-        );
+        // draw turning points
+        for (@NotNull final Map.Entry<Double, Double> turningPoint : turningPoints.entrySet()) {
+            drawPoint(new Point(turningPoint.getKey(), turningPoint.getValue()), g, yAxisX, xAxisY);
+        }
     }
 
     /**
