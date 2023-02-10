@@ -75,12 +75,15 @@ public final class DrawFunction extends JLabel {
     @Nullable
     private String tangentFunction;
     /** Der Zustand, ob die Nullstellen angezeigt werden sollen oder nicht. */
+    @Getter
     @Setter
     private boolean enableRoots;
     /** Der Zustand, ob die Extremstellen angezeigt werden sollen oder nicht. */
+    @Getter
     @Setter
     private boolean enableExtremes;
     /** Der Zustand, ob die Wendepunkte angezeigt werden sollen oder nicht. */
+    @Getter
     @Setter
     private boolean enableTurningPoints;
     //</editor-fold>

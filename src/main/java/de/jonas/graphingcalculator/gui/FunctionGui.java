@@ -137,6 +137,8 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         // create popup-menu item to show roots
         final JRadioButtonMenuItem showRootsItem = new JRadioButtonMenuItem("Nullstellen anzeigen", false);
         showRootsItem.addChangeListener(e -> {
+            if (this.drawFunction.isEnableRoots() == showRootsItem.isSelected()) return;
+
             this.drawFunction.setEnableRoots(showRootsItem.isSelected());
             this.drawFunction.repaint();
         });
@@ -144,6 +146,8 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         // create popup-menu item to show extremes
         final JRadioButtonMenuItem showExtremesItem = new JRadioButtonMenuItem("Extremstellen anzeigen", false);
         showExtremesItem.addChangeListener(e -> {
+            if (this.drawFunction.isEnableExtremes() == showExtremesItem.isSelected()) return;
+
             this.drawFunction.setEnableExtremes(showExtremesItem.isSelected());
             this.drawFunction.repaint();
         });
@@ -151,6 +155,8 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         // create popup-menu item to show turning points
         final JRadioButtonMenuItem showTurningPointsItem = new JRadioButtonMenuItem("Wendepunkte anzeigen", false);
         showTurningPointsItem.addChangeListener(e -> {
+            if (this.drawFunction.isEnableTurningPoints() == showTurningPointsItem.isSelected()) return;
+
             this.drawFunction.setEnableTurningPoints(showTurningPointsItem.isSelected());
             this.drawFunction.repaint();
         });
