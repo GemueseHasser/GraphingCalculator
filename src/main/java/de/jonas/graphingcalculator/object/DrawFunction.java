@@ -128,7 +128,7 @@ public final class DrawFunction extends JLabel {
             lastDerivation = FunctionHandler.getDerivationValues(lastDerivation);
         }
 
-        // initialize variables (x-1)(x+2)(x-3)^2
+        // initialize variables
         this.functionHandler = functionHandler;
         this.function = filteredFunction;
         this.scaleX = scaleX;

@@ -317,7 +317,7 @@ public final class FunctionHandler {
         final NavigableMap<Double, Double> derivationValues = new TreeMap<>();
 
         for (@NotNull final Map.Entry<Double, Double> functionValue : function.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
+            if (functionValue.getValue().isNaN() || functionValue.getValue().isInfinite()) continue;
 
             // get current x
             final double x = functionValue.getKey();
@@ -335,7 +335,11 @@ public final class FunctionHandler {
             final double previousX = previousEntry.getKey();
             final double previousY = previousEntry.getValue();
 
-            derivationValues.put(x, (nextY - previousY) / (nextX - previousX));
+            final double y = (nextY - previousY) / (nextX - previousX);
+
+            if (!Double.isFinite(y)) continue;
+
+            derivationValues.put(x, y);
         }
 
         return derivationValues;
