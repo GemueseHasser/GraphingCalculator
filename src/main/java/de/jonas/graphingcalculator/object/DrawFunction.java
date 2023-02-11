@@ -86,6 +86,10 @@ public final class DrawFunction extends JLabel {
     @Getter
     @Setter
     private boolean enableTurningPoints;
+    /** Der Zustand, ob die Wendepunkte angezeigt werden sollen oder nicht. */
+    @Getter
+    @Setter
+    private boolean enableSaddlePoints;
     //</editor-fold>
 
 
@@ -279,6 +283,7 @@ public final class DrawFunction extends JLabel {
         if (this.enableRoots) drawRoots(g, yAxisX, xAxisY);
         if (this.enableExtremes) drawExtremes(g, yAxisX, xAxisY);
         if (this.enableTurningPoints) drawTurningPoints(g, yAxisX, xAxisY);
+        if (this.enableSaddlePoints) drawSaddlePoints(g, yAxisX, xAxisY);
 
         // draw marked points
         for (@NotNull final Point point : this.markedPoints) {
@@ -360,7 +365,7 @@ public final class DrawFunction extends JLabel {
      * Zeichnet einen bestimmten {@link Point Punkt} in dieses Koordinatensystem.
      *
      * @param point  Der {@link Point Punkt}, der in diesem Koordinatensystem eingezeichnet werden soll.
-     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem der Punkt eingezeichnet werden soll.
      * @param yAxisX Die x-Koordinate der y-Achse.
      * @param xAxisY Die y-Koordinate der x-Achse.
      */
@@ -429,7 +434,7 @@ public final class DrawFunction extends JLabel {
     /**
      * Zeichnet alle Extremstellen der Funktion mit ihren Koordinaten ein.
      *
-     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Extremstellen eingezeichnet werden sollen.
      * @param yAxisX Die x-Koordinate der y-Achse.
      * @param xAxisY Die y-Koordinate der x-Achse.
      */
@@ -450,7 +455,7 @@ public final class DrawFunction extends JLabel {
     /**
      * Zeichnet alle Wendepunkte der Funktion mit ihren Koordinaten ein.
      *
-     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Wendepunkte eingezeichnet werden sollen.
      * @param yAxisX Die x-Koordinate der y-Achse.
      * @param xAxisY Die y-Koordinate der x-Achse.
      */
@@ -469,9 +474,30 @@ public final class DrawFunction extends JLabel {
     }
 
     /**
+     * Zeichnet alle Sattelpunkte der Funktion mit ihren Koordinaten ein.
+     *
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Sattelpunkte eingezeichnet werden sollen.
+     * @param yAxisX Die x-Koordinate der y-Achse.
+     * @param xAxisY Die y-Koordinate der x-Achse.
+     */
+    private void drawSaddlePoints(
+        @NotNull final Graphics g,
+        @Range(from = 0, to = Integer.MAX_VALUE) final int yAxisX,
+        @Range(from = 0, to = Integer.MAX_VALUE) final int xAxisY
+    ) {
+        // get turning points
+        final Map<Double, Double> saddlePoints = this.functionHandler.getSaddlePoints();
+
+        // draw turning points
+        for (@NotNull final Map.Entry<Double, Double> saddlePoint : saddlePoints.entrySet()) {
+            drawPoint(new Point(saddlePoint.getKey(), saddlePoint.getValue()), g, yAxisX, xAxisY);
+        }
+    }
+
+    /**
      * Zeichnet, falls eine Tangentengleichung vorhanden ist, die Tangente ein.
      *
-     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param g      Das {@link Graphics Grafik-Objekt}, mit dem die Tangente eingezeichnet werden soll.
      * @param yAxisX Die x-Koordinate der y-Achse.
      * @param xAxisY Die y-Koordinate der x-Achse.
      */
@@ -501,7 +527,7 @@ public final class DrawFunction extends JLabel {
     /**
      * Zeichnet eine Funktion mithilfe von beliebig vielen Funktionswerten.
      *
-     * @param g              Das {@link Graphics Grafik-Objekt}, mit dem die Nullstellen eingezeichnet werden sollen.
+     * @param g              Das {@link Graphics Grafik-Objekt}, mit dem die Funktion eingezeichnet werden soll.
      * @param functionValues Alle Funktionswerte, die genutzt werden sollen, um die Funktion zu zeichnen.
      * @param yAxisX         Die x-Koordinate der y-Achse.
      * @param xAxisY         Die y-Koordinate der x-Achse.

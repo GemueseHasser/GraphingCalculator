@@ -161,6 +161,15 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             this.drawFunction.repaint();
         });
 
+        // create popup-menu item to show saddle points
+        final JRadioButtonMenuItem showSaddlePointsItem = new JRadioButtonMenuItem("Sattelpunkte anzeigen", false);
+        showSaddlePointsItem.addChangeListener(e -> {
+            if (this.drawFunction.isEnableSaddlePoints() == showSaddlePointsItem.isSelected()) return;
+
+            this.drawFunction.setEnableSaddlePoints(showSaddlePointsItem.isSelected());
+            this.drawFunction.repaint();
+        });
+
         // create popup-menu item to show derivation
         final JRadioButtonMenuItem[] derivationItems = new JRadioButtonMenuItem[this.drawFunction.getDerivations().size()];
         for (int i = 0; i < this.drawFunction.getDerivations().size(); i++) {
@@ -170,6 +179,9 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             derivationItems[i].addChangeListener(e -> {
                 final Derivation derivation = this.drawFunction.getDerivations().get(finalI);
                 derivation.setDraw(derivationItems[finalI].isSelected());
+
+                if (derivation.isDraw() == derivationItems[finalI].isSelected()) return;
+
                 this.drawFunction.repaint();
             });
         }
@@ -254,6 +266,7 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
         pointMenu.add(showRootsItem);
         pointMenu.add(showExtremesItem);
         pointMenu.add(showTurningPointsItem);
+        pointMenu.add(showSaddlePointsItem);
 
         // create menu to display marks in the menu-bar
         final JMenu markMenu = new JMenu("Markierungen");

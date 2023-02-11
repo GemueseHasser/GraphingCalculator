@@ -54,23 +54,50 @@ public final class FunctionHandler {
         return values;
     }
 
+    /**
+     * Gibt alle Wendepunkte dieser Funktion zurück.
+     *
+     * @return Alle Wendepunkte dieser Funktion.
+     */
     @NotNull
     public Map<Double, Double> getTurningPoints() {
         final Map<Double, Double> turningPoints = new HashMap<>();
+        final NavigableMap<Double, Double> derivationValues = getDerivationValues(getFunctionValues());
 
-        final NavigableMap<Double, Double> functionValues = getFunctionValues();
-        final NavigableMap<Double, Double> derivationValues = getDerivationValues(functionValues);
+        for (@NotNull final Map.Entry<Double, Double> wsPointEntry : getWSPoints().entrySet()) {
+            final double x = wsPointEntry.getKey();
+            final double y = wsPointEntry.getValue();
+            final double m = Math.round(derivationValues.get(x) * 1000D) / 1000D;
 
-        final Map<Double, Double> derivationExtremes = getExtremes(derivationValues);
-
-        for (@NotNull final Map.Entry<Double, Double> derivationExtremesEntry : derivationExtremes.entrySet()) {
-            final double x = derivationExtremesEntry.getKey();
-            final double y = getFunctionValue(x);
+            if (m == 0) continue;
 
             turningPoints.put(x, y);
         }
 
         return turningPoints;
+    }
+
+    /**
+     * Gibt alle Sattelpunkte dieser Funktion zurück.
+     *
+     * @return Alle Sattelpunkte dieser Funktion.
+     */
+    @NotNull
+    public Map<Double, Double> getSaddlePoints() {
+        final Map<Double, Double> saddlePoints = new HashMap<>();
+        final NavigableMap<Double, Double> derivationValues = getDerivationValues(getFunctionValues());
+
+        for (@NotNull final Map.Entry<Double, Double> wsPointEntry : getWSPoints().entrySet()) {
+            final double x = wsPointEntry.getKey();
+            final double y = wsPointEntry.getValue();
+            final double m = Math.round(derivationValues.get(x) * 1000D) / 1000D;
+
+            if (m != 0) continue;
+
+            saddlePoints.put(x, y);
+        }
+
+        return saddlePoints;
     }
 
     /**
@@ -122,6 +149,32 @@ public final class FunctionHandler {
 
         // return function with b
         return m + "x " + (b < 0 ? "- " : "+ ") + Math.abs(b);
+    }
+
+    /**
+     * Gibt eine Map zurück, die sowohl Wendepunkte als auch Sattelpunkte beinhaltet. Diese Punkte müssen mithilfe ihrer
+     * Steigung erst als Wende- oder Sattelpunkt identifiziert werden.
+     *
+     * @return Eine Map, die sowohl Wendepunkte als auch Sattelpunkte beinhaltet. Diese Punkte müssen mithilfe ihrer
+     *     Steigung erst als Wende- oder Sattelpunkt identifiziert werden.
+     */
+    @NotNull
+    private Map<Double, Double> getWSPoints() {
+        final Map<Double, Double> wsPoints = new HashMap<>();
+
+        final NavigableMap<Double, Double> functionValues = getFunctionValues();
+        final NavigableMap<Double, Double> derivationValues = getDerivationValues(functionValues);
+
+        final Map<Double, Double> derivationExtremes = getExtremes(derivationValues);
+
+        for (@NotNull final Map.Entry<Double, Double> derivationExtremesEntry : derivationExtremes.entrySet()) {
+            final double x = derivationExtremesEntry.getKey();
+            final double y = getFunctionValue(x);
+
+            wsPoints.put(x, y);
+        }
+
+        return wsPoints;
     }
 
     //<editor-fold desc="utility">
