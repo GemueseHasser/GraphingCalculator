@@ -50,45 +50,6 @@ public final class FunctionHandler {
         return values;
     }
 
-    /**
-     * Gibt alle Nullstellen dieser Funktion in Form einer {@link Map} zurück.
-     *
-     * @return Alle Nullstellen dieser Funktion in Form einer {@link Map}.
-     */
-    @NotNull
-    public Map<Double, Double> getRoots() {
-        final Map<Double, Double> roots = new HashMap<>();
-        final NavigableMap<Double, Double> functionValues = getFunctionValues();
-
-        for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
-
-            // get current values
-            final double x = functionValue.getKey();
-            final double y = functionValue.getValue();
-
-            // check if current value is already preset
-            if (roots.containsKey(x)) continue;
-
-            // check if next entry is preset
-            if (functionValues.higherEntry(x) == null) break;
-
-            // get next entry
-            final Map.Entry<Double, Double> nextEntry = functionValues.higherEntry(x);
-
-            // get next values
-            final double nextX = nextEntry.getKey();
-            final double nextY = nextEntry.getValue();
-
-            // check (+ to +) or (- to -)
-            if ((y > 0 && nextY > 0) || (y < 0 && nextY < 0)) continue;
-
-            roots.put(nextX, nextY);
-        }
-
-        return roots;
-    }
-
     @NotNull
     public Map<Double, Double> getTurningPoints() {
         final Map<Double, Double> turningPoints = new HashMap<>();
@@ -291,6 +252,44 @@ public final class FunctionHandler {
                 return x;
             }
         }.parse();
+    }
+
+    /**
+     * Gibt alle Nullstellen dieser Funktion in Form einer {@link Map} zurück.
+     *
+     * @return Alle Nullstellen dieser Funktion in Form einer {@link Map}.
+     */
+    @NotNull
+    public static Map<Double, Double> getRoots(@NotNull final NavigableMap<Double, Double> functionValues) {
+        final Map<Double, Double> roots = new HashMap<>();
+
+        for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
+            if (functionValue.getValue().isNaN()) continue;
+
+            // get current values
+            final double x = functionValue.getKey();
+            final double y = functionValue.getValue();
+
+            // check if current value is already preset
+            if (roots.containsKey(x)) continue;
+
+            // check if next entry is preset
+            if (functionValues.higherEntry(x) == null) break;
+
+            // get next entry
+            final Map.Entry<Double, Double> nextEntry = functionValues.higherEntry(x);
+
+            // get next values
+            final double nextX = nextEntry.getKey();
+            final double nextY = nextEntry.getValue();
+
+            // check (+ to +) or (- to -)
+            if ((y > 0 && nextY > 0) || (y < 0 && nextY < 0)) continue;
+
+            roots.put(nextX, nextY);
+        }
+
+        return roots;
     }
 
     /**

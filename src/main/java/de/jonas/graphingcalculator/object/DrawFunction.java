@@ -401,7 +401,7 @@ public final class DrawFunction extends JLabel {
         @Range(from = 0, to = Integer.MAX_VALUE) final int xAxisY
     ) {
         // get roots
-        final Map<Double, Double> roots = this.functionHandler.getRoots();
+        final Map<Double, Double> roots = FunctionHandler.getRoots(this.function);
 
         // draw roots
         for (@NotNull final Map.Entry<Double, Double> rootEntry : roots.entrySet()) {
