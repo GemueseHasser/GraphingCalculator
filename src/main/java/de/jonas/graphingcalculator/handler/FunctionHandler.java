@@ -44,7 +44,11 @@ public final class FunctionHandler {
 
         // calculate function values
         for (double i = -this.xScaling; i < this.xScaling; i = Math.round((i + (this.xScaling / 10000D)) * 1000D) / 1000D) {
-            values.put(i, getFunctionValue(i));
+            final double functionValue = getFunctionValue(i);
+
+            if (!Double.isFinite(functionValue)) continue;
+
+            values.put(i, functionValue);
         }
 
         return values;
@@ -264,8 +268,6 @@ public final class FunctionHandler {
         final Map<Double, Double> roots = new HashMap<>();
 
         for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
-
             // get current values
             final double x = functionValue.getKey();
             final double y = functionValue.getValue();
@@ -302,8 +304,6 @@ public final class FunctionHandler {
         final Map<Double, Double> extremes = new HashMap<>();
 
         for (@NotNull final Map.Entry<Double, Double> functionValue : functionValues.entrySet()) {
-            if (functionValue.getValue().isNaN()) continue;
-
             // get current values
             final double x = functionValue.getKey();
             final double y = functionValue.getValue();
@@ -334,8 +334,6 @@ public final class FunctionHandler {
         final NavigableMap<Double, Double> derivationValues = new TreeMap<>();
 
         for (@NotNull final Map.Entry<Double, Double> functionValue : function.entrySet()) {
-            if (functionValue.getValue().isNaN() || functionValue.getValue().isInfinite()) continue;
-
             // get current x
             final double x = functionValue.getKey();
 
