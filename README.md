@@ -1,8 +1,8 @@
 # GraphingCalculator
-Der grafikfähige Taschenrechner wird in der Programmiersprache Java entwickelt und bietet die normale Berchnung 
+Der grafikfähige Taschenrechner wird in der Programmiersprache *Java* entwickelt und bietet die normale Berchnung 
 von Termen ohne Variablen an, das Zeichnen von Funktionen und das Anlegen von Wertetabellen.
-Für alle Eingaben mit Variable wird ausschließlich die Variable x verwendet. 
-Um in einer Funktion eine Wurzel zu nutzen, wird die Standard-Abkürzung sqrt genutzt.
+Für alle Eingaben mit Variable wird ausschließlich die Variable *x* verwendet. 
+Um in einer Funktion eine Wurzel zu nutzen, wird die Standard-Abkürzung *sqrt* genutzt.
 
 Funktionen des Taschenrechners:  
 
@@ -27,20 +27,20 @@ der x-Achse von -10 bis 10 und auf der y-Achse von-15 bis 15.
 Für die Skalierung der Koordinaten-Achsen dürfen ausschließlich natürliche Zahlen verwendet werden.
 
 Wenn die Funktion gezeichnet wurde, stehen dem Anwender folgende Optionen unter fogenden Menüs zur Verfügung:  
-- Punkte  
-+ Nullstellen anzeigen
-+ Extremstellen anzeigen
-+ Wendepunkte anzeigen 
-+ Sattelpunkte anzeigen
-- Markierungen  
-+ Punkt einzeichnen 
-+ Letzten Punkt entfernen 
-- Ableitung  
-+ erste Ableitung 
-+ zweite Ableitung 
-+ dritte Ableitung 
-- Extra  
-+ Tangente anlegen
++ Punkte  
+  + Nullstellen anzeigen
+  + Extremstellen anzeigen
+  + Wendepunkte anzeigen 
+  + Sattelpunkte anzeigen
++ Markierungen  
+  + Punkt einzeichnen 
+  + Letzten Punkt entfernen 
++ Ableitung  
+  + erste Ableitung 
+  + zweite Ableitung 
+  + dritte Ableitung 
++ Extra  
+  + Tangente anlegen
 
 Außerdem wird der Punkt an der Stelle der Maus angezeigt, solange die Maus gedrückt gehalten wird.
 Wenn man die Maus bewegt, aktualisiert sich der Punkt, der angezeigt wird automatisch und wird neu eingezeichnet. 
