@@ -4,7 +4,7 @@ von Termen ohne Variablen an, das Zeichnen von Funktionen und das Anlegen von We
 Für alle Eingaben mit Variable wird ausschließlich die Variable x verwendet. 
 Um in einer Funktion eine Wurzel zu nutzen, wird die Standard-Abkürzung sqrt genutzt.
 
-Funktionen des Taschenrechners 
+Funktionen des Taschenrechners:  
 
 **1) Berechnung von Termen**  
 Der Taschenrechner ermöglicht das normale Berechnen von Termen ohne Variablen. 
@@ -26,20 +26,20 @@ Wählt man also als x-Skalierung den Wert 10 und als y-Skalierung den Wert 15, g
 der x-Achse von -10 bis 10 und auf der y-Achse von-15 bis 15. 
 Für die Skalierung der Koordinaten-Achsen dürfen ausschließlich natürliche Zahlen verwendet werden.
 
-Wenn die Funktion gezeichnet wurde, stehen dem Anwender folgende Optionen unter fogenden Menüs zur Verfügung: 
-A Punkte  
+Wenn die Funktion gezeichnet wurde, stehen dem Anwender folgende Optionen unter fogenden Menüs zur Verfügung:  
+- Punkte  
 + Nullstellen anzeigen
 + Extremstellen anzeigen
 + Wendepunkte anzeigen 
 + Sattelpunkte anzeigen
-B Markierungen  
+- Markierungen  
 + Punkt einzeichnen 
 + Letzten Punkt entfernen 
-C Ableitung  
+- Ableitung  
 + erste Ableitung 
 + zweite Ableitung 
 + dritte Ableitung 
-D Extra  
+- Extra  
 + Tangente anlegen
 
 Außerdem wird der Punkt an der Stelle der Maus angezeigt, solange die Maus gedrückt gehalten wird.
