@@ -4,7 +4,7 @@ von Termen ohne Variablen an, das Zeichnen von Funktionen und das Anlegen von We
 Für alle Eingaben mit Variable wird ausschließlich die Variable *x* verwendet. 
 Um in einer Funktion eine Wurzel zu nutzen, wird die Standard-Abkürzung *sqrt* genutzt.
 
-Funktionen des Taschenrechners:  
+## Funktionen des Taschenrechners:  
 
 **1) Berechnung von Termen**  
 Der Taschenrechner ermöglicht das normale Berechnen von Termen ohne Variablen. 
