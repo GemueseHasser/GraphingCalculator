@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +25,7 @@ public final class FunctionHandler {
     @NotNull
     private final String function;
     /** Die Skalierung der x-Achse. */
-    @Range(from = 0, to = Integer.MAX_VALUE)
-    private final int xScaling;
+    private final double xScaling;
     //</editor-fold>
 
 
@@ -43,7 +41,7 @@ public final class FunctionHandler {
         final NavigableMap<Double, Double> values = new TreeMap<>();
 
         // calculate function values
-        for (double i = -this.xScaling; i < this.xScaling; i = Math.round((i + (this.xScaling / 10000D)) * 1000D) / 1000D) {
+        for (double i = -this.xScaling; i < this.xScaling; i += Math.round(this.xScaling / 10D) / 1000D) {
             final double functionValue = getFunctionValue(i);
 
             if (!Double.isFinite(functionValue)) continue;
