@@ -178,10 +178,10 @@ public final class FunctionGui extends Gui implements MouseListener, MouseMotion
             final int finalI = i;
             derivationItems[i].addChangeListener(e -> {
                 final Derivation derivation = this.drawFunction.getDerivations().get(finalI);
-                derivation.setDraw(derivationItems[finalI].isSelected());
 
                 if (derivation.isDraw() == derivationItems[finalI].isSelected()) return;
 
+                derivation.setDraw(derivationItems[finalI].isSelected());
                 this.drawFunction.repaint();
             });
         }
