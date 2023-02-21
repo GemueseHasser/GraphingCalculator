@@ -223,16 +223,14 @@ public final class FunctionHandler {
                 nextChar();
                 double x = parseExpression();
 
-                if (pos < finalTerm.length()) {
-                    return 0;
-                }
+                if (pos < finalTerm.length()) return 0;
 
                 return x;
             }
 
             private double parseExpression() {
                 double x = parseTerm();
-                for (; ; ) {
+                while (true) {
                     if (eat('+')) {
                         x += parseTerm();
                     } else if (eat('-')) {
@@ -245,7 +243,7 @@ public final class FunctionHandler {
 
             private double parseTerm() {
                 double x = parseFactor();
-                for (; ; ) {
+                while (true) {
                     if (eat('*')) {
                         x *= parseFactor();
                     } else if (eat('/')) {
