@@ -42,7 +42,7 @@ public final class FunctionHandler {
 
         // calculate function values
         for (double i = -this.xScaling; i < this.xScaling; i += Math.round(this.xScaling / 10D) / 1000D) {
-            final double functionValue = getFunctionValue(i);
+            final double functionValue = getFunctionValue(Math.round(i * 1000D) / 1000D);
 
             if (!Double.isFinite(functionValue)) continue;
 
@@ -122,7 +122,6 @@ public final class FunctionHandler {
     public String getTangentFunction(final double x) {
         final NavigableMap<Double, Double> functionValues = getFunctionValues();
 
-        if (functionValues.get(x) == null) return null;
         if (functionValues.lowerEntry(x) == null || functionValues.higherEntry(x) == null) return null;
 
         // get current function value
