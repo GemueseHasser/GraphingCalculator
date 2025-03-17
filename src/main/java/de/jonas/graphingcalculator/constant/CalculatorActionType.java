@@ -21,6 +21,7 @@ import java.util.Objects;
  * Taschenrechner ausführen kann und welche im {@link de.jonas.graphingcalculator.gui.MainGui Haupt-Fenster} angezeigt
  * wird.
  */
+@Getter
 @NotNull
 public enum CalculatorActionType {
 
@@ -88,7 +89,6 @@ public enum CalculatorActionType {
 
     //<editor-fold desc="LOCAL FIELDS">
     /** Der Button, der diesen {@link CalculatorActionType Typ} repräsentiert und angezeigt wird. */
-    @Getter
     private final JButton button;
     //</editor-fold>
 
